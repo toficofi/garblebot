@@ -1,0 +1,27 @@
+{
+  "name": "garblebot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.coffee",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "coffee index.coffee"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jishaxe/garblebot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jishaxe/garblebot/issues"
+  },
+  "homepage": "https://github.com/Jishaxe/garblebot#readme",
+  "dependencies": {
+    "coffeescript": "^1.12.4",
+    "config": "^1.25.1",
+    "discord.js": "^11.0.0",
+    "promise-waterfall": "^0.1.0",
+    "promise.waterfall": "^3.1.4"
+  }
+}
