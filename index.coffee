@@ -22,7 +22,8 @@ bot.on 'error', (error) ->
 # Response to @ help
 bot.on 'helpRequest', (message) ->
   message.reply "I'm a bot that runs what you say through a bunch of languages, and then back to English. Send me a DM, or @ me. You'll get some hilarious results. Powered by Yandex.Translate: http://translate.yandex.com/"
-
+  message.reply "Want me in your server? https://discordapp.com/oauth2/authorize?&client_id=#{bot.user.id}&scope=bot"
+  
 bot.on 'message', (message) ->
   # Responds when the bot is @ or with a direct message
   if (message.isMentioned bot.user) or (message.channel.type is "dm")
