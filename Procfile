@@ -1,1 +1,1 @@
-bot: npm install && npm start
+bot: npm start
