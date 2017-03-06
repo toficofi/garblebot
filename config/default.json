@@ -1,5 +1,5 @@
 {
-  "languages": ["es", "fr", "de", "cy", "af", "en"],
+  "languages": ["fr", "cy", "af", "pa", "ja", "uz", "ko", "it", "en"],
   "discordToken": "<INSERT DISCORD TOKEN HERE>",
   "yandexKey": "<INSERT YANDEX API KEY HERE>"
 }

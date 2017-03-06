@@ -8,9 +8,13 @@ if yandexKey is "<INSERT YANDEX API KEY HERE>"
 
 translator = yandex yandexKey
 
-module.exports = (text, language) ->
+module.exports = (text, from, language) ->
   new Promise (resolve, reject) ->
-    translator.translate text, {to: language}, (err, result) ->
+    data = {to: language}
+    if from isnt null then data.from = from
+
+    translator.translate text, data, (err, result) ->
       if err then reject "Error while translating text to #{language}: #{err}"
       if result.code isnt 200 then reject "Expected HTTP code 200 with Yandex, got #{result.code}"
+      console.log "#{result.text}: #{from} - #{language}"
       return resolve result.text

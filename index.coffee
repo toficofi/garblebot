@@ -33,8 +33,8 @@ bot.on 'message', (message) ->
     text = message.cleanContent.replace "@#{bot.user.username}", ""
     text = text.trim()
 
-    # Truncate the text to 300 letters
-    text = text.substring(0, 300)
+    # Truncate the text to 500 letters
+    text = text.substring(0, 500)
 
     # Response to help
     if text is "help"
@@ -45,10 +45,10 @@ bot.on 'message', (message) ->
     translationPromises = languages.map (language, index) ->
       if index is 0
         return () ->
-          garble text, language
+          garble text, null, language
       else
         return (toGarble) ->
-          garble toGarble[0], language
+          garble toGarble[0], languages[index - 1], language
 
     # Execute every garbling operation, passing the result of the last to the next one until we get to the result
     waterfall translationPromises
