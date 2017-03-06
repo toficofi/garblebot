@@ -8,6 +8,8 @@ languages = config.get "languages"
 bot = new Discord.Client()
 token = config.get "discordToken"
 
+pingTime = null
+
 if token is "<INSERT DISCORD TOKEN HERE>" then throw new Error "No Discord token specified in config/default.json. Get a bot user token from https://discordapp.com/developers/applications/me"
 
 bot.on 'ready', ->
@@ -19,14 +21,26 @@ bot.on 'ready', ->
 bot.on 'error', (error) ->
   console.error error
 
+# Response to ping
+# Will wait for Discord to tell us about our message, then edit with the time elapsed
+bot.on 'ping', (message) ->
+  pingTime = Date.now()
+  message.reply "**Pong!** ..."
+
 # Response to @ help
 bot.on 'helpRequest', (message) ->
   message.reply "I'm a bot that runs what you say through a bunch of languages, and then back to English. Send me a DM, or @ me. You'll get some hilarious results. Powered by Yandex.Translate: http://translate.yandex.com/. Source: https://github.com/Jishaxe/garblebot"
   message.reply "Want me in your server? https://discordapp.com/oauth2/authorize?&client_id=#{bot.user.id}&scope=bot"
 
 bot.on 'message', (message) ->
+  # If this is the bot's pong messsage, edit with the elapsed time
+  if message.author is bot.user and pingTime isnt null
+    message.edit message.content.replace("...", "#{Date.now() - pingTime}ms")
+    pingTime = null
+    return
+
   # Responds when the bot is @ or with a direct message
-  if (message.isMentioned bot.user) or (message.channel.type is "dm")
+  if (message.cleanContent.startsWith("@#{bot.user.username}")) or (message.channel.type is "dm")
     # Don't respond to bots (including myself)
     if message.author.bot then return
     # Delete any mention of the bot in the text to stop recursiveness
@@ -39,6 +53,10 @@ bot.on 'message', (message) ->
     # Response to help
     if text is "help"
       bot.emit "helpRequest", message
+      return
+
+    if text is "ping"
+      bot.emit "ping", message
       return
 
     # Map every language to a promise that garbles in that language
