@@ -21,6 +21,7 @@
     "coffeescript": "^1.12.4",
     "config": "^1.25.1",
     "discord.js": "^11.0.0",
+    "git-rev": "^0.2.1",
     "number-to-words": "^1.2.3",
     "promise-waterfall": "^0.1.0",
     "promise.waterfall": "^3.1.4",
