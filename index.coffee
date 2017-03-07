@@ -1,10 +1,9 @@
 Discord = require 'discord.js'
 garble = require "./garble"
+help = require "./help"
 config = require "config"
 waterfall = require "promise.waterfall"
-numberToWords = require "number-to-words"
 languages = config.get "languages"
-
 bot = new Discord.Client()
 token = config.get "discordToken"
 
@@ -28,9 +27,7 @@ bot.on 'ping', (message) ->
   message.reply "**Pong!** ..."
 
 # Response to @ help
-bot.on 'helpRequest', (message) ->
-  message.channel.sendMessage "I'm a bot that runs what you say through a bunch of languages, and then back to English. Send me a DM, or @ me. You'll get some hilarious results. Powered by Yandex.Translate: http://translate.yandex.com/. Source: https://github.com/Jishaxe/garblebot"
-  message.channel.sendMessage "Want me in your server, as well as **#{numberToWords.toWords(bot.guilds.size)}** others? https://discordapp.com/oauth2/authorize?&client_id=#{bot.user.id}&scope=bot"
+bot.on 'help', help
 
 bot.on 'message', (message) ->
   # If this is the bot's pong messsage, edit with the elapsed time
@@ -52,13 +49,15 @@ bot.on 'message', (message) ->
 
     # Response to help
     if text is "help"
-      bot.emit "helpRequest", message
+      bot.emit "help", message, bot
       return
 
     if text is "ping"
       bot.emit "ping", message
       return
 
+    # Start typing while we translate
+    message.channel.startTyping()
     # Map every language to a promise that garbles in that language
     translationPromises = languages.map (language, index) ->
       if index is 0
@@ -76,6 +75,8 @@ bot.on 'message', (message) ->
       # If we got an error at any point, print it out and let the user know
       console.error "ERROR: #{error}"
       message.reply "Sorry, I had an error while garbling that!"
+    .then () ->
+      message.channel.stopTyping()
 
 console.log "Connecting to Discord..."
 bot.login token
