@@ -6,8 +6,13 @@ waterfall = require "promise.waterfall"
 languages = config.get "languages"
 bot = new Discord.Client()
 token = config.get "discordToken"
-
+superagent = require "superagent"
 pingTime = null
+
+# Set up command line arguments
+args = require 'commander'
+.option '-u, --updatestats', 'Updates the bot stats with discord.pw'
+.parse process.argv
 
 if token is "<INSERT DISCORD TOKEN HERE>" then throw new Error "No Discord token specified in config/default.json. Get a bot user token from https://discordapp.com/developers/applications/me"
 
@@ -15,6 +20,29 @@ bot.on 'ready', ->
   # Set instructions to get help
   bot.user.setGame "@#{bot.user.username} help"
   console.log 'connected! garblebot is now active. message help for help'
+
+  if args.updatestats
+    console.log "Launched in --updatestats mode, updating stats with discord.pw..."
+    update_stats()
+    .then (count) -> console.log "Successfully updated with #{count} servers"
+    .catch (err) -> console.error "Error updating stats: #{err}"
+    .then () ->
+      console.log "Exiting..."
+      process.exit()
+
+
+# Updates server count stats with Discord.IO
+update_stats = ->
+  new Promise (resolve, reject) ->
+    superagent.post "https://bots.discord.pw/api/bots/#{bot.user.id}/stats"
+    .send {server_count: bot.guilds.size}
+    .set "Authorization", config.get "discordPwToken"
+    .end (err, res) ->
+      if err
+        reject err
+        return
+      resolve bot.guilds.size
+
 
 # Just print any errors to the consule
 bot.on 'error', (error) ->
